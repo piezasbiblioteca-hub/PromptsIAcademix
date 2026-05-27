@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>9 Marcos de Prompts de IA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f4f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+ 
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+ 
+    p.subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+ 
+    /* ── Carrusel ── */
+    .carousel-wrapper {
+      width: 100%;
+      max-width: 1100px;
+      position: relative;
+    }
+ 
+    .carousel-track-container {
+      overflow: hidden;
+      border-radius: 16px;
+      padding: 16px 4px 24px;
+    }
+ 
+    .carousel-track {
+      display: flex;
+      gap: 20px;
+      transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+ 
+    /* ── Tarjeta ── */
+    .card {
+      min-width: 270px;
+      width: 270px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1.5px solid #e0e0e0;
+      background: #fff;
+      cursor: pointer;
+      transition: transform 400ms, filter 400ms, box-shadow 400ms;
+      flex-shrink: 0;
+    }
+ 
+    .card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    }
+ 
+    /* ── Header coloreado ── */
+    .card-top {
+      padding: 16px 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+ 
+    .initials-col {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+ 
+    .init-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+ 
+    .top-title {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+ 
+    .top-sub {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: .8;
+    }
+ 
+    .top-acronym {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+ 
+    /* ── Cuerpo blanco ── */
+    .card-body {
+      background: #fff;
+      padding: 12px 16px 6px;
+    }
+ 
+    .letter-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 0.5px solid #f0f0f0;
+    }
+ 
+    .letter-row:last-child { border-bottom: none; }
+ 
+    .lbadge {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+ 
+    .ltext {
+      font-size: 13px;
+      color: #333;
+      font-weight: 500;
+    }
+ 
+    .card-footer {
+      margin: 6px 16px 16px;
+      padding: 10px 12px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: #555;
+      border: 0.5px solid #e8e8e8;
+      background: #fafafa;
+    }
+ 
+    /* ── Controles ── */
+    .carousel-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 8px;
+    }
+ 
+    .btn-nav {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1.5px solid #d0d0d0;
+      background: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 200ms, border-color 200ms, transform 150ms;
+      color: #333;
+      user-select: none;
+    }
+ 
+    .btn-nav:hover { background: #f0f0f0; border-color: #aaa; }
+    .btn-nav:active { transform: scale(0.94); }
+    .btn-nav:disabled { opacity: 0.35; cursor: default; }
+ 
+    .dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+ 
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+      cursor: pointer;
+      transition: background 300ms, transform 300ms;
+    }
+ 
+    .dot.active {
+      background: #555;
+      transform: scale(1.35);
+    }
+ 
+    /* ── Colores por marco ── */
+    .purple .card-top  { background: #4A96B7; }
+    .purple .top-sub, .purple .top-acronym, .purple .init-badge { color: #DBF6FF; }
+    .purple .lbadge { background: #EDF7FE; color: #346689; }
+ 
+    .amber .card-top { background: #BA7517; }
+    .amber .top-sub, .amber .top-acronym, .amber .init-badge { color: #FAEEDA; }
+    .amber .lbadge { background: #FAEEDA; color: #633806; }
+ 
+    .green-d .card-top { background: #3B6D11; }
+    .green-d .top-sub, .green-d .top-acronym, .green-d .init-badge { color: #EAF3DE; }
+    .green-d .lbadge { background: #EAF3DE; color: #27500A; }
+ 
+    .teal .card-top { background: #4A96B7; }
+    .teal .top-sub, .teal .top-acronym, .teal .init-badge { color: #DBF6FF; }
+    .teal .lbadge { background: #EDF7FE; color: #346689; }
+ 
+    .coral .card-top { background: #BA7517; }
+    .coral .top-sub, .coral .top-acronym, .coral .init-badge { color: #FAEEDA; }
+    .coral .lbadge { background: #FAEEDA; color: #633806; }
+ 
+    .blue-d .card-top { background: #3B6D11; }
+    .blue-d .top-sub, .blue-d .top-acronym, .blue-d .init-badge { color: #EAF3DE; }
+    .blue-d .lbadge { background: #EAF3DE; color: #27500A; }
+ 
+    .pink-d .card-top { background: #4A96B7; }
+    .pink-d .top-sub, .pink-d .top-acronym, .pink-d .init-badge { color: #DBF6FF; }
+    .pink-d .lbadge { background: #EDF7FE; color: #346689; }
+ 
+    .gray-d .card-top { background: #BA7517; }
+    .gray-d .top-sub, .gray-d .top-acronym, .gray-d .init-badge { color: #FAEEDA; }
+    .gray-d .lbadge { background: #FAEEDA; color: #633806; }
+ 
+    .red-d .card-top { background: #3B6D11; }
+    .red-d .top-sub, .red-d .top-acronym, .red-d .init-badge { color: #EAF3DE; }
+    .red-d .lbadge { background: #EAF3DE; color: #27500A; }
+  </style>
+</head>
+<body>
+ 
+  <h1>9 Marcos de Prompts de IA</h1>
+  <p class="subtitle">Navega entre los marcos con las flechas o los puntos</p>
+ 
+  <div class="carousel-wrapper">
+    <div class="carousel-track-container">
+      <div class="carousel-track" id="track">
+ 
+        <!-- RISE -->
+        <div class="card purple">
+          <div class="card-top">
+            <div class="initials-col">
+              
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">RISE</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">R</div><span class="ltext">Rol</span></div>
+            <div class="letter-row"><div class="lbadge">I</div><span class="ltext">Entrada (Input)</span></div>
+            <div class="letter-row"><div class="lbadge">S</div><span class="ltext">Pasos</span></div>
+            <div class="letter-row"><div class="lbadge">E</div><span class="ltext">Expectativa</span></div>
+          </div>
+          <div class="card-footer">Sirve para tareas complejas donde necesitas respuestas organizadas y detalladas. <b>Ejemplo:</b> "Actúa como [profesor de biología]. Usa esta información: [artículo científico adjunto]. Sigue estos pasos: [resume, explica y compara los hallazgos]. La respuesta debe cumplir con: [lenguaje claro y máximo 300 palabras]."</div>
+        </div>
+ 
+        <!-- RTCROS -->
+        <div class="card amber">
+          <div class="card-top">
+            <div class="initials-col">
+             
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">RTCROS</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">R</div><span class="ltext">Rol</span></div>
+            <div class="letter-row"><div class="lbadge">T</div><span class="ltext">Tarea</span></div>
+            <div class="letter-row"><div class="lbadge">C</div><span class="ltext">Contexto</span></div>
+            <div class="letter-row"><div class="lbadge">R</div><span class="ltext">Reglas</span></div>
+            <div class="letter-row"><div class="lbadge">O</div><span class="ltext">Salida</span></div>
+            <div class="letter-row"><div class="lbadge">S</div><span class="ltext">Estilo</span></div>
+          </div>
+          <div class="card-footer">Sirve para obtener respuestas completas con formato y estilo definidos. <b>Ejemplo:</b> "Actúa como [tutor universitario]. Tu tarea es [resumir este texto]. Ten en cuenta este contexto: [estudiantes de primer semestre]. Sigue estas reglas: [máximo 200 palabras]. Entrega la respuesta en formato [viñetas]. Usa este estilo: [académico y claro]."</div>
+        </div>
+ 
+        <!-- GROW -->
+        <div class="card green-d">
+          <div class="card-top">
+            <div class="initials-col">
+              
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">GROW</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">G</div><span class="ltext">Meta (Goal)</span></div>
+            <div class="letter-row"><div class="lbadge">R</div><span class="ltext">Realidad</span></div>
+            <div class="letter-row"><div class="lbadge">O</div><span class="ltext">Opciones</span></div>
+            <div class="letter-row"><div class="lbadge">W</div><span class="ltext">Camino a seguir</span></div>
+          </div>
+          <div class="card-footer">Sirve para planear proyectos, organizar ideas o tomar decisiones. <b>Ejemplo:</b> "Quiero lograr [mejorar mis hábitos de estudio]. Mi situación actual es [me distraigo fácilmente]. Propón varias opciones: [técnicas de concentración]. Recomienda el mejor camino a seguir: [plan semanal]."</div>
+        </div>
+ 
+        <!-- SCQA -->
+        <div class="card teal">
+          <div class="card-top">
+            <div class="initials-col">
+              
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">SCQA</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">S</div><span class="ltext">Situación</span></div>
+            <div class="letter-row"><div class="lbadge">C</div><span class="ltext">Complicación</span></div>
+            <div class="letter-row"><div class="lbadge">Q</div><span class="ltext">Pregunta (Question)</span></div>
+            <div class="letter-row"><div class="lbadge">A</div><span class="ltext">Respuesta (Answer)</span></div>
+          </div>
+          <div class="card-footer">Sirve para analizar problemas de forma lógica y estructurada. <b>Ejemplo:</b> "Explica este tema usando la siguiente estructura: Situación: [aumento del uso de IA en educación]. Complicación: [riesgo de plagio académico]. Pregunta: [¿cómo puede usarse éticamente?]. Respuesta: [recomendaciones y buenas prácticas]."</div>
+        </div>
+ 
+        <!-- PECRA -->
+        <div class="card coral">
+          <div class="card-top">
+            <div class="initials-col">
+              
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">PECRA</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">P</div><span class="ltext">Problema</span></div>
+            <div class="letter-row"><div class="lbadge">E</div><span class="ltext">Evidencia</span></div>
+            <div class="letter-row"><div class="lbadge">C</div><span class="ltext">Causa</span></div>
+            <div class="letter-row"><div class="lbadge">R</div><span class="ltext">Recomendación</span></div>
+            <div class="letter-row"><div class="lbadge">A</div><span class="ltext">Acción</span></div>
+          </div>
+          <div class="card-footer">Sirve para análisis críticos y propuestas de solución. <b>Ejemplo:</b> "Analiza el siguiente tema: Problema: [deserción universitaria]. Evidencia: [estadísticas recientes]. Causa: [factores económicos y emocionales]. Recomendación: [estrategias de acompañamiento]. Acción: [plan institucional]."</div>
+        </div>
+ 
+        <!-- AIDA -->
+        <div class="card blue-d">
+          <div class="card-top">
+            <div class="initials-col">
+              
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">AIDA</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">A</div><span class="ltext">Atención</span></div>
+            <div class="letter-row"><div class="lbadge">I</div><span class="ltext">Interés</span></div>
+            <div class="letter-row"><div class="lbadge">D</div><span class="ltext">Deseo</span></div>
+            <div class="letter-row"><div class="lbadge">A</div><span class="ltext">Acción</span></div>
+          </div>
+          <div class="card-footer">Sirve para crear mensajes atractivos y persuasivos. <b>Ejemplo:</b> "Crea un mensaje que capte la atención con [una pregunta impactante], genere interés mediante [beneficios de aprender IA], despierte deseo por [participar en el taller] y finalice con una acción clara: [inscríbete aquí]."</div>
+        </div>
+ 
+        <!-- PAS -->
+        <div class="card pink-d">
+          <div class="card-top">
+            <div class="initials-col">
+            
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">PAS</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">P</div><span class="ltext">Problema</span></div>
+            <div class="letter-row"><div class="lbadge">A</div><span class="ltext">Agita</span></div>
+            <div class="letter-row"><div class="lbadge">S</div><span class="ltext">Solución</span></div>
+          </div>
+          <div class="card-footer">Sirve para mensajes cortos, claros y directos. <b>Ejemplo:</b> "Describe el problema: [plagio académico]. Explica por qué es importante: [puede afectar tu proceso formativo]. Propón una solución: [usar correctamente las citas y referencias]."</div>
+        </div>
+ 
+        <!-- CARE -->
+        <div class="card gray-d">
+          <div class="card-top">
+            <div class="initials-col">
+              
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">CARE</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">C</div><span class="ltext">Contexto</span></div>
+            <div class="letter-row"><div class="lbadge">A</div><span class="ltext">Acción</span></div>
+            <div class="letter-row"><div class="lbadge">R</div><span class="ltext">Resultado</span></div>
+            <div class="letter-row"><div class="lbadge">E</div><span class="ltext">Ejemplo</span></div>
+          </div>
+          <div class="card-footer">Sirve para aprender mediante explicaciones prácticas y ejemplos. <b>Ejemplo:</b> "Explica el siguiente tema: Contexto: [normas APA 7]. Acción: [cómo citar un artículo]. Resultado: [referencia correcta]. Ejemplo: [cita y referencias completas]."</div>
+        </div>
+ 
+        <!-- RTF -->
+        <div class="card red-d">
+          <div class="card-top">
+            <div class="initials-col">
+             
+            </div>
+            <div class="top-title">
+              <span class="top-sub">Marco</span>
+              <span class="top-acronym">RTF</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="letter-row"><div class="lbadge">R</div><span class="ltext">Rol</span></div>
+            <div class="letter-row"><div class="lbadge">T</div><span class="ltext">Tarea</span></div>
+            <div class="letter-row"><div class="lbadge">F</div><span class="ltext">Formato</span></div>
+          </div>
+          <div class="card-footer">Sirve para solicitudes rápidas y concretas. <b>Ejemplo:</b> "Actúa como [profesor de historia]. Realiza esta tarea: [resume la Revolución Francesa]. Entrega la respuesta en formato [tabla comparativa]."</div>
+        </div>
+ 
+      </div>
+    </div>
+ 
+    <div class="carousel-controls">
+      <button class="btn-nav" id="btn-prev" aria-label="Anterior">&#8592;</button>
+      <div class="dots" id="dots"></div>
+      <button class="btn-nav" id="btn-next" aria-label="Siguiente">&#8594;</button>
+    </div>
+  </div>
+ 
+  <script>
+    const track = document.getElementById('track');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const dotsContainer = document.getElementById('dots');
+ 
+    const cards = Array.from(track.children);
+    const total = cards.length;
+    const CARD_WIDTH = 270;
+    const GAP = 20;
+    const STEP = CARD_WIDTH + GAP;
+ 
+    let current = 0;
+ 
+    function getVisible() {
+      const w = track.parentElement.clientWidth;
+      return Math.max(1, Math.floor((w + GAP) / STEP));
+    }
+ 
+    function maxIndex() {
+      return Math.max(0, total - getVisible());
+    }
+ 
+    // Build dots
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(d);
+    }
+ 
+    function goTo(index) {
+      current = Math.max(0, Math.min(index, maxIndex()));
+      track.style.transform = `translateX(-${current * STEP}px)`;
+      document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+      btnPrev.disabled = current === 0;
+      btnNext.disabled = current >= maxIndex();
+    }
+ 
+    btnPrev.addEventListener('click', () => goTo(current - 1));
+    btnNext.addEventListener('click', () => goTo(current + 1));
+    window.addEventListener('resize', () => goTo(Math.min(current, maxIndex())));
+ 
+    goTo(0);
+ 
+    // Swipe / drag support
+    let startX = 0, dragging = false;
+    track.addEventListener('mousedown', e => { startX = e.clientX; dragging = true; });
+    track.addEventListener('mousemove', e => { if (dragging) e.preventDefault(); });
+    track.addEventListener('mouseup', e => {
+      if (!dragging) return; dragging = false;
+      const diff = startX - e.clientX;
+      if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+    });
+    track.addEventListener('mouseleave', () => { dragging = false; });
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+    });
+  </script>
+</body>
+</html>
